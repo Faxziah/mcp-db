@@ -1,0 +1,12 @@
+{
+    "name": "mcp-db",
+    "version": "1.0.0",
+    "description": "MCP-сервер выполнения запросов к БД",
+    "main": "mcp-db.js",
+    "scripts": {
+      "start": "DB_CONTAINER_NAME=\"my_posgres\" DB_USER=\"user\" DB_NAME=\"swap_master\" ALLOW_INSERT=\"false\" ALLOW_UPDATE=\"false\" ALLOW_DELETE=\"false\" node mcp-db.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+  }
