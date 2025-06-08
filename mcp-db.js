@@ -72,6 +72,23 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({ result: stdout }));
       });
     });
+  } else if (req.method === 'GET' && req.url === '/get-db-schema') {
+    const query = "SELECT table_name, column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_schema = 'public' ORDER BY table_name, ordinal_position;";
+    const command = `docker exec ${DB_CONTAINER_NAME} psql -U ${DB_USER} -d ${DB_NAME} -c "${query}"`;
+    const fullCommand = DB_PASSWORD ? `docker exec -e PGPASSWORD=${DB_PASSWORD} ${DB_CONTAINER_NAME} psql -U ${DB_USER} -d ${DB_NAME} -c "${query}"` : command;
+
+    exec(fullCommand, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: stderr }));
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ result: stdout }));
+    });
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
